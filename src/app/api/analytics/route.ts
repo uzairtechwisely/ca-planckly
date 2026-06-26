@@ -8,6 +8,8 @@ const eventNameSchema = z.enum([
   "cta_join_click",
   "lead_submit_click",
   "lead_submit_success",
+  "prelaunch_voucher_click",
+  "prelaunch_voucher_submit_success",
 ]);
 
 const requestSchema = z.object({

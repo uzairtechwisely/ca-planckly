@@ -16,7 +16,9 @@ export type AnalyticsEventName =
   | "page_view"
   | "cta_join_click"
   | "lead_submit_click"
-  | "lead_submit_success";
+  | "lead_submit_success"
+  | "prelaunch_voucher_click"
+  | "prelaunch_voucher_submit_success";
 
 type AnalyticsPayload = {
   pathname?: string;

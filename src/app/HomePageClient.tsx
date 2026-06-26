@@ -10,6 +10,7 @@ import { Pricing } from "@/components/Pricing";
 import { Faq } from "@/components/Faq";
 import { SiteFooter } from "@/components/SiteFooter";
 import { JoinModal } from "@/components/JoinModal";
+import { PrelaunchOverlay } from "@/components/PrelaunchOverlay";
 
 export function HomePageClient() {
   const { track } = useClientContext();
@@ -31,6 +32,7 @@ export function HomePageClient() {
       </main>
       <SiteFooter />
       <JoinModal key={joinOpen ? "open" : "closed"} open={joinOpen} onClose={() => setJoinOpen(false)} />
+      <PrelaunchOverlay />
     </div>
   );
 }
