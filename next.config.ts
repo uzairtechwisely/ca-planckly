@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
         hostname: "joinnow.planckly.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "coresg-normal.trae.ai",
+        pathname: "/api/ide/v1/**",
+      },
     ],
   },
 };

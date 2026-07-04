@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { getRedis, keyPrefix } from "@/lib/redis";
+import { recordAnalyticsEvent } from "@/repositories/analyticsRepository";
 
 const eventNameSchema = z.enum([
   "page_view",
@@ -17,8 +17,15 @@ const requestSchema = z.object({
   visitorId: z.string().trim().min(10).max(80),
   consent: z.enum(["granted", "denied"]),
   ts: z.number().int().positive(),
-  region: z.literal("US-CA"),
-  locale: z.literal("en-US"),
+  region: z.string().trim().max(40).optional(),
+  locale: z.string().trim().max(40).optional(),
+  campaign: z
+    .object({
+      hostname: z.string().trim().max(200),
+      template: z.string().trim().max(80),
+      slug: z.string().trim().max(120).optional(),
+    })
+    .optional(),
   attribution: z
     .object({
       utm_source: z.string().trim().max(120).optional(),
@@ -36,14 +43,6 @@ const requestSchema = z.object({
     .optional(),
 });
 
-function yyyyMmDd(ts: number) {
-  const d = new Date(ts);
-  const yyyy = d.getUTCFullYear();
-  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const dd = String(d.getUTCDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-}
-
 export async function POST(req: Request) {
   let json: unknown;
   try {
@@ -58,30 +57,20 @@ export async function POST(req: Request) {
   }
 
   const data = parsed.data;
-  const date = yyyyMmDd(data.ts);
-  const prefix = keyPrefix(process.env.ANALYTICS_KEY_PREFIX ?? process.env.LEADS_KEY_PREFIX);
-  const redis = getRedis();
-  if (!redis) {
-    return NextResponse.json({ ok: true });
-  }
-
-  const uvKey = `${prefix}:analytics:uv:${date}`;
-  const eventUvKey = `${prefix}:analytics:event:${data.event}:${date}`;
-  const eventCountKey = `${prefix}:analytics:counts:${data.event}:${date}`;
-
-  await redis.sadd(uvKey, data.visitorId);
-  await redis.sadd(eventUvKey, data.visitorId);
-  await redis.incr(eventCountKey);
-
-  if (data.consent === "granted" && data.attribution) {
-    const attrKey = `${prefix}:analytics:lastAttribution:${data.visitorId}`;
-    await redis.hset(attrKey, {
-      ...Object.fromEntries(
-        Object.entries(data.attribution).map(([k, v]) => [k, v ?? ""]),
-      ),
-      updatedAt: new Date(data.ts).toISOString(),
-    });
-  }
+  await recordAnalyticsEvent({
+    event: data.event,
+    visitorId: data.visitorId,
+    consent: data.consent,
+    ts: data.ts,
+    region: data.region,
+    locale: data.locale,
+    campaign: data.campaign,
+    attribution: data.attribution
+      ? {
+          ...data.attribution,
+        }
+      : undefined,
+  });
 
   return NextResponse.json({ ok: true });
 }

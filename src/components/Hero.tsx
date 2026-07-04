@@ -4,7 +4,81 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Sparkles, ShieldCheck, Zap } from "lucide-react";
 
-export function Hero({ onJoin }: { onJoin: () => void }) {
+type HeroFeature = {
+  icon: "shield-check" | "zap" | "sparkles";
+  title: string;
+  description: string;
+};
+
+function FeatureIcon({ icon }: { icon: HeroFeature["icon"] }) {
+  if (icon === "shield-check") return <ShieldCheck className="h-5 w-5" aria-hidden />;
+  if (icon === "zap") return <Zap className="h-5 w-5" aria-hidden />;
+  return <Sparkles className="h-5 w-5" aria-hidden />;
+}
+
+export function Hero({
+  onJoin,
+  badge,
+  headingPrefix,
+  headingHighlight,
+  headingSuffix,
+  subheading,
+  primaryCtaLabel,
+  secondaryCtaLabel,
+  secondaryCtaHref,
+  features,
+  image,
+  miniStats,
+}: {
+  onJoin: () => void;
+  badge?: string;
+  headingPrefix?: string;
+  headingHighlight?: string;
+  headingSuffix?: string;
+  subheading?: string;
+  primaryCtaLabel?: string;
+  secondaryCtaLabel?: string;
+  secondaryCtaHref?: string;
+  features?: HeroFeature[];
+  image?: { src: string; alt?: string };
+  miniStats?: Array<{ label: string; value: string }>;
+}) {
+  const resolvedBadge = badge ?? "Built for California";
+  const resolvedHeadingPrefix = headingPrefix ?? "Join Planckly and";
+  const resolvedHeadingHighlight = headingHighlight ?? "grow with confidence";
+  const resolvedHeadingSuffix = headingSuffix ?? ".";
+  const resolvedSubheading =
+    subheading ??
+    "A premium, modern platform designed to help California teams move faster — with better tools, clearer insights, and a smooth onboarding experience. Free to start.";
+  const resolvedPrimaryCtaLabel = primaryCtaLabel ?? "Join Planckly (Free)";
+  const resolvedSecondaryCtaLabel = secondaryCtaLabel ?? "View pricing";
+  const resolvedSecondaryCtaHref = secondaryCtaHref ?? "#pricing";
+  const resolvedFeatures =
+    features ?? [
+      {
+        icon: "shield-check",
+        title: "Trusted local",
+        description: "Clear policies, transparent onboarding, and California-first messaging.",
+      },
+      {
+        icon: "zap",
+        title: "Fast setup",
+        description: "A streamlined flow that feels great on mobile and desktop.",
+      },
+      {
+        icon: "sparkles",
+        title: "Premium experience",
+        description: "Polished UI, smooth motion, and clean design language.",
+      },
+    ];
+  const resolvedImage = image ?? { src: "https://joinnnow.plancklyimages.com/hero_img.avif", alt: "Planckly" };
+  const resolvedMiniStats =
+    miniStats ?? [
+      { label: "Coverage", value: "CA first" },
+      { label: "Setup", value: "Minutes" },
+      { label: "Cost", value: "$0 to start" },
+    ];
+
   return (
     <section className="relative overflow-hidden pb-16 pt-28 sm:pt-32">
       <div
@@ -27,7 +101,7 @@ export function Hero({ onJoin }: { onJoin: () => void }) {
             className="inline-flex items-center gap-2 rounded-full bg-[var(--plk-success-50)] px-4 py-2 text-xs font-semibold tracking-wide text-[var(--plk-success-600)]"
           >
             <span className="h-2 w-2 rounded-full bg-[var(--plk-success-600)]" />
-            <span>Built for California</span>
+            <span>{resolvedBadge}</span>
           </motion.div>
 
           <motion.h1
@@ -36,12 +110,12 @@ export function Hero({ onJoin }: { onJoin: () => void }) {
             transition={{ duration: 0.6, delay: 0.05, ease: [0.2, 0.8, 0.2, 1] }}
             className="mt-5 font-[var(--font-heading)] text-4xl font-extrabold leading-[1.05] tracking-[-0.02em] text-[var(--plk-ink-900)] sm:text-5xl"
           >
-            Join Planckly and{" "}
+            {resolvedHeadingPrefix}{" "}
             <span className="relative inline-block text-[var(--plk-brand-600)]">
-              grow with confidence
+              {resolvedHeadingHighlight}
               <span className="pointer-events-none absolute -bottom-2 left-0 right-0 h-[10px] rounded-full bg-[rgba(47,109,246,0.18)]" />
             </span>
-            .
+            {resolvedHeadingSuffix}
           </motion.h1>
 
           <motion.p
@@ -50,8 +124,7 @@ export function Hero({ onJoin }: { onJoin: () => void }) {
             transition={{ duration: 0.6, delay: 0.1, ease: [0.2, 0.8, 0.2, 1] }}
             className="mt-5 max-w-xl text-base leading-7 text-[var(--plk-ink-600)] sm:text-lg"
           >
-            A premium, modern platform designed to help California teams move faster — with better tools,
-            clearer insights, and a smooth onboarding experience. Free to start.
+            {resolvedSubheading}
           </motion.p>
 
           <motion.div
@@ -65,32 +138,25 @@ export function Hero({ onJoin }: { onJoin: () => void }) {
               onClick={onJoin}
               className="inline-flex h-12 items-center justify-center rounded-full bg-[var(--plk-brand-600)] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--plk-brand-700)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--plk-brand-600)] focus-visible:ring-offset-2"
             >
-              Join Planckly (Free)
+              {resolvedPrimaryCtaLabel}
             </button>
             <a
-              href="#pricing"
+              href={resolvedSecondaryCtaHref}
               className="inline-flex h-12 items-center justify-center rounded-full border border-[var(--plk-border)] bg-white px-6 text-sm font-semibold text-[var(--plk-ink-900)] transition hover:bg-[var(--plk-bg-50)]"
             >
-              View pricing
+              {resolvedSecondaryCtaLabel}
             </a>
           </motion.div>
 
           <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <FeatureCard
-              icon={<ShieldCheck className="h-5 w-5" aria-hidden />}
-              title="Trusted local"
-              desc="Clear policies, transparent onboarding, and California-first messaging."
-            />
-            <FeatureCard
-              icon={<Zap className="h-5 w-5" aria-hidden />}
-              title="Fast setup"
-              desc="A streamlined flow that feels great on mobile and desktop."
-            />
-            <FeatureCard
-              icon={<Sparkles className="h-5 w-5" aria-hidden />}
-              title="Premium experience"
-              desc="Polished UI, smooth motion, and clean design language."
-            />
+            {resolvedFeatures.map((feature) => (
+              <FeatureCard
+                key={feature.title}
+                icon={<FeatureIcon icon={feature.icon} />}
+                title={feature.title}
+                desc={feature.description}
+              />
+            ))}
           </div>
         </div>
 
@@ -104,8 +170,8 @@ export function Hero({ onJoin }: { onJoin: () => void }) {
           <div className="relative overflow-hidden rounded-[28px] border border-[var(--plk-border)] bg-white shadow-[var(--plk-shadow-card)]">
             <div className="relative aspect-[4/3]">
               <Image
-                src="https://joinnnow.plancklyimages.com/hero_img.avif"
-                alt="Planckly"
+                src={resolvedImage.src}
+                alt={resolvedImage.alt ?? "Planckly"}
                 fill
                 sizes="(max-width: 1024px) 100vw, 520px"
                 className="object-cover"
@@ -113,9 +179,9 @@ export function Hero({ onJoin }: { onJoin: () => void }) {
               />
             </div>
             <div className="grid grid-cols-3 gap-3 p-4">
-              <MiniStat label="Coverage" value="CA first" />
-              <MiniStat label="Setup" value="Minutes" />
-              <MiniStat label="Cost" value="$0 to start" />
+              {resolvedMiniStats.map((stat) => (
+                <MiniStat key={`${stat.label}:${stat.value}`} label={stat.label} value={stat.value} />
+              ))}
             </div>
           </div>
         </motion.div>

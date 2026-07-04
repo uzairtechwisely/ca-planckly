@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { ulid } from "ulid";
 import { z } from "zod";
 
-import { getRedis, keyPrefix } from "@/lib/redis";
+import { getActiveCampaign } from "@/campaign/activeCampaign";
+import { normalizeHostname } from "@/campaign/hostname";
+import { saveLead } from "@/repositories/leadRepository";
 
 const leadTypeSchema = z.enum(["join", "pre-launch"]);
 
@@ -13,8 +14,9 @@ const createLeadSchema = z
     email: z.string().trim().email().max(120),
     phone: z.string().trim().min(7).max(30).optional().or(z.literal("")),
     plan: z.literal("free").default("free"),
-    locale: z.literal("en-US").default("en-US"),
-    region: z.literal("US-CA").default("US-CA"),
+    locale: z.string().trim().max(40).default("en-US"),
+    region: z.string().trim().max(40).optional(),
+    country: z.string().trim().max(40).optional(),
     source: z.string().trim().max(120).optional(),
     utm: z
       .object({
@@ -66,51 +68,28 @@ export async function POST(req: Request) {
   const data = parsed.data;
   const leadType = data.leadType ?? "join";
   const phone = leadType === "pre-launch" ? undefined : data.phone?.trim() ? data.phone.trim() : undefined;
+  const hostname = normalizeHostname(req.headers.get("host"));
+  const activeCampaign = await getActiveCampaign(hostname);
+  const resolvedRegion = activeCampaign.content.region ?? data.region ?? "US-CA";
+  const resolvedCountry = activeCampaign.content.country ?? data.country;
+  const resolvedSlug = activeCampaign.content.slug;
 
-  const leadId = ulid();
-  const now = Date.now();
-  const prefix = keyPrefix(process.env.LEADS_KEY_PREFIX);
-  const redis = getRedis();
-  if (!redis) {
-    return NextResponse.json({ ok: true, leadId });
-  }
-
-  const normalizedEmail = data.email.trim().toLowerCase();
-  const emailKey = `${prefix}:leads:email:${normalizedEmail}`;
-  const existingLeadId = await redis.get<string>(emailKey);
-  if (existingLeadId) {
-    if (leadType === "pre-launch") {
-      const existingLeadKey = `${prefix}:lead:${existingLeadId}`;
-      await redis.hset(existingLeadKey, {
-        prelaunchVoucherRequestedAt: new Date(now).toISOString(),
-      });
-      await redis.zadd(`${prefix}:leads:prelaunch:byCreatedAt`, { score: now, member: existingLeadId });
-    }
-    return NextResponse.json({ ok: true, leadId: existingLeadId });
-  }
-
-  const leadKey = `${prefix}:lead:${leadId}`;
-  const createdAt = new Date(now).toISOString();
-
-  await redis.hset(leadKey, {
-    name: data.name?.trim() ?? "",
-    email: normalizedEmail,
-    phone: phone ?? "",
-    plan: "free",
-    region: data.region,
-    locale: data.locale,
-    source: data.source ?? "",
+  const result = await saveLead({
     leadType,
-    prelaunchVoucherRequestedAt: leadType === "pre-launch" ? createdAt : "",
-    createdAt,
-    utmJson: data.utm ? JSON.stringify(data.utm) : "",
+    hostname: activeCampaign.hostname || hostname,
+    template: activeCampaign.template,
+    slug: resolvedSlug,
+    region: resolvedRegion,
+    country: resolvedCountry,
+    locale: data.locale,
+    plan: "free",
+    source: data.source,
+    name: data.name,
+    email: data.email,
+    phone,
+    utm: data.utm,
+    userAgent: req.headers.get("user-agent") ?? undefined,
   });
 
-  await redis.zadd(`${prefix}:leads:byCreatedAt`, { score: now, member: leadId });
-  if (leadType === "pre-launch") {
-    await redis.zadd(`${prefix}:leads:prelaunch:byCreatedAt`, { score: now, member: leadId });
-  }
-  await redis.set(emailKey, leadId);
-
-  return NextResponse.json({ ok: true, leadId });
+  return NextResponse.json({ ok: true, leadId: result.leadId });
 }

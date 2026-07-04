@@ -9,6 +9,7 @@ import {
   setConsent as setConsentStore,
   subscribe,
   type CookieConsent,
+  type CampaignClientContext,
   updateAttribution,
 } from "@/lib/clientState";
 
@@ -30,6 +31,7 @@ type ClientContextValue = {
   setConsent: (value: Exclude<CookieConsent, "unknown">) => void;
   visitorId: string;
   attribution?: Attribution;
+  campaign?: CampaignClientContext;
   track: (event: AnalyticsEventName, payload?: AnalyticsPayload) => void;
   updateAttributionFromUrl: (pathname: string, searchParams: URLSearchParams) => void;
 };
@@ -37,7 +39,7 @@ type ClientContextValue = {
 const ClientContext = createContext<ClientContextValue | null>(null);
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {
-  const { consent, visitorId, attribution } = useSyncExternalStore(
+  const { consent, visitorId, attribution, campaign } = useSyncExternalStore(
     subscribe,
     getSnapshot,
     getServerSnapshot,
@@ -66,6 +68,24 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
   const track = useCallback(
     (event: AnalyticsEventName, payload?: AnalyticsPayload) => {
       const effectiveConsent = consent === "granted" ? "granted" : "denied";
+      const domCampaign =
+        !campaign && typeof document !== "undefined"
+          ? (() => {
+              const el = document.querySelector("[data-campaign-template]") as HTMLElement | null;
+              if (!el) return undefined;
+              const hostname = el.getAttribute("data-campaign-hostname") ?? "";
+              const template = el.getAttribute("data-campaign-template") ?? "";
+              const slug = el.getAttribute("data-campaign-slug") ?? "";
+              if (!hostname || !template) return undefined;
+              return {
+                hostname,
+                template,
+                slug: slug || undefined,
+              } satisfies CampaignClientContext;
+            })()
+          : undefined;
+      const effectiveCampaign = campaign ?? domCampaign;
+
       void fetch("/api/analytics", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -74,8 +94,15 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
           visitorId,
           consent: effectiveConsent,
           ts: Date.now(),
-          region: "US-CA",
+          region: campaign?.region ?? "US-CA",
           locale: "en-US",
+          campaign: effectiveCampaign
+            ? {
+                hostname: effectiveCampaign.hostname,
+                template: effectiveCampaign.template,
+                slug: effectiveCampaign.slug,
+              }
+            : undefined,
           attribution: {
             ...(attribution ?? {}),
             landing_path:
@@ -87,7 +114,7 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
         }),
       }).catch(() => {});
     },
-    [attribution, consent, visitorId],
+    [attribution, campaign, consent, visitorId],
   );
 
   const value = useMemo<ClientContextValue>(
@@ -96,10 +123,11 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
       setConsent,
       visitorId,
       attribution,
+      campaign,
       track,
       updateAttributionFromUrl,
     }),
-    [attribution, consent, setConsent, track, updateAttributionFromUrl, visitorId],
+    [attribution, campaign, consent, setConsent, track, updateAttributionFromUrl, visitorId],
   );
 
   return <ClientContext.Provider value={value}>{children}</ClientContext.Provider>;

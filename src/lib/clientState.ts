@@ -4,10 +4,19 @@ import { type Attribution, mergeAttribution } from "@/lib/attribution";
 
 export type CookieConsent = "unknown" | "granted" | "denied";
 
+export type CampaignClientContext = {
+  hostname: string;
+  template: string;
+  slug?: string;
+  region?: string;
+  country?: string;
+};
+
 export type ClientState = {
   consent: CookieConsent;
   visitorId: string;
   attribution?: Attribution;
+  campaign?: CampaignClientContext;
 };
 
 type Listener = () => void;
@@ -16,11 +25,12 @@ let state: ClientState = {
   consent: "unknown",
   visitorId: "",
   attribution: undefined,
+  campaign: undefined,
 };
 
 let initialized = false;
 const listeners = new Set<Listener>();
-const serverSnapshot: ClientState = { consent: "unknown", visitorId: "", attribution: undefined };
+const serverSnapshot: ClientState = { consent: "unknown", visitorId: "", attribution: undefined, campaign: undefined };
 
 function emit() {
   for (const l of listeners) l();
@@ -86,7 +96,7 @@ function init() {
   const visitorId = ensureVisitorId(effectiveConsent);
   const attribution = readJson<Attribution>("plk_attr");
 
-  state = { consent, visitorId, attribution };
+  state = { consent, visitorId, attribution, campaign: undefined };
 }
 
 export function subscribe(listener: Listener) {
@@ -129,6 +139,13 @@ export function updateAttribution(next: Attribution) {
   emit();
 }
 
+export function setCampaign(next: CampaignClientContext | undefined) {
+  init();
+  if (sameCampaign(state.campaign, next)) return;
+  state = { ...state, campaign: next };
+  emit();
+}
+
 function sameAttribution(a: Attribution | undefined, b: Attribution | undefined) {
   if (!a && !b) return true;
   if (!a || !b) return false;
@@ -139,4 +156,16 @@ function sameAttribution(a: Attribution | undefined, b: Attribution | undefined)
     if (a[k] !== b[k]) return false;
   }
   return true;
+}
+
+function sameCampaign(a: CampaignClientContext | undefined, b: CampaignClientContext | undefined) {
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  return (
+    a.hostname === b.hostname &&
+    a.template === b.template &&
+    a.slug === b.slug &&
+    a.region === b.region &&
+    a.country === b.country
+  );
 }

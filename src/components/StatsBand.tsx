@@ -1,14 +1,24 @@
 "use client";
 
-export function StatsBand() {
+export function StatsBand({
+  stats,
+}: {
+  stats?: Array<{ value: string; label: string }>;
+} = {}) {
+  const resolvedStats =
+    stats ?? [
+      { value: "2.3k+", label: "Early interest" },
+      { value: "US-CA", label: "Launch region" },
+      { value: "99.9%", label: "Uptime target" },
+      { value: "$0", label: "To start" },
+    ];
   return (
     <section className="relative bg-[var(--plk-footer-900)]">
       <div className="mx-auto w-full max-w-6xl px-4 py-14">
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-          <Stat value="2.3k+" label="Early interest" />
-          <Stat value="US-CA" label="Launch region" />
-          <Stat value="99.9%" label="Uptime target" />
-          <Stat value="$0" label="To start" />
+          {resolvedStats.map((stat) => (
+            <Stat key={`${stat.label}:${stat.value}`} value={stat.value} label={stat.label} />
+          ))}
         </div>
       </div>
       <Wave />
@@ -40,4 +50,3 @@ function Wave() {
     </svg>
   );
 }
-

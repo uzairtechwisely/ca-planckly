@@ -6,9 +6,15 @@ import { motion } from "framer-motion";
 
 export function SiteHeader({
   onJoin,
+  logoSrc,
+  joinLabel,
 }: {
   onJoin: () => void;
+  logoSrc?: string;
+  joinLabel?: string;
 }) {
+  const resolvedLogoSrc = logoSrc ?? "https://joinnnow.plancklyimages.com/Logo.png";
+  const resolvedJoinLabel = joinLabel ?? "Join Planckly";
   return (
     <div className="pointer-events-none fixed inset-x-0 top-4 z-40 flex justify-center px-4">
       <motion.header
@@ -21,7 +27,7 @@ export function SiteHeader({
           <div className="flex items-center gap-3 pl-2">
             <div className="relative h-9 w-28">
               <Image
-                src="https://joinnnow.plancklyimages.com/Logo.png"
+                src={resolvedLogoSrc}
                 alt="Planckly"
                 fill
                 sizes="112px"
@@ -36,7 +42,7 @@ export function SiteHeader({
               onClick={onJoin}
               className="group relative inline-flex h-11 items-center gap-3 rounded-full bg-[var(--plk-brand-600)] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--plk-brand-700)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--plk-brand-600)] focus-visible:ring-offset-2"
             >
-              <span>Join Planckly</span>
+              <span>{resolvedJoinLabel}</span>
               <span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--plk-brand-700)] transition group-hover:translate-x-0.5">
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </span>

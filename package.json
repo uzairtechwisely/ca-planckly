@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:campaign-route": "node scripts/seed-campaign-route.mjs"
   },
   "dependencies": {
     "@upstash/redis": "^1.35.3",

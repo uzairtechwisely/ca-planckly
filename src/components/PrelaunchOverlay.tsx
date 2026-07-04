@@ -56,14 +56,10 @@ function createConfetti(seed: number, count: number): ConfettiPiece[] {
   });
 }
 
-function ConfettiBurst({ active }: { active: boolean }) {
-  const [pieces, setPieces] = useState<ConfettiPiece[]>([]);
+const confettiPreset = createConfetti(1337, 46);
 
-  useEffect(() => {
-    if (!active) return;
-    const seed = Math.floor(Date.now() % 2147483647);
-    setPieces(createConfetti(seed, 46));
-  }, [active]);
+function ConfettiBurst({ active }: { active: boolean }) {
+  const pieces = confettiPreset;
 
   return (
     <AnimatePresence>
@@ -282,4 +278,3 @@ export function PrelaunchOverlay() {
     </>
   );
 }
-

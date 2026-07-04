@@ -4,26 +4,36 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const faqs = [
-  {
-    q: "Is Planckly available in California today?",
-    a: "We’re building the California launch experience now. Join for free to get early access updates.",
-  },
-  {
-    q: "Do I need to commit or pay to join?",
-    a: "No. The Free Plan is for early access and updates. You can opt into paid plans later.",
-  },
-  {
-    q: "Will you support other regions?",
-    a: "Yes. After CA, we’ll replicate the same landing experience for Texas (tx.planckly.com) and then the UK (planckly.co.uk).",
-  },
-  {
-    q: "What tracking do you do?",
-    a: "We measure unique visits and the source of traffic to improve the landing page. Analytics cookies are optional.",
-  },
-];
-
-export function Faq() {
+export function Faq({
+  eyebrow,
+  heading,
+  items,
+}: {
+  eyebrow?: string;
+  heading?: string;
+  items?: Array<{ q: string; a: string }>;
+} = {}) {
+  const resolvedEyebrow = eyebrow ?? "FAQ";
+  const resolvedHeading = heading ?? "Questions, answered";
+  const resolvedItems =
+    items ?? [
+      {
+        q: "Is Planckly available in California today?",
+        a: "We’re building the California launch experience now. Join for free to get early access updates.",
+      },
+      {
+        q: "Do I need to commit or pay to join?",
+        a: "No. The Free Plan is for early access and updates. You can opt into paid plans later.",
+      },
+      {
+        q: "Will you support other regions?",
+        a: "Yes. After CA, we’ll replicate the same landing experience for Texas (tx.planckly.com) and then the UK (planckly.co.uk).",
+      },
+      {
+        q: "What tracking do you do?",
+        a: "We measure unique visits and the source of traffic to improve the landing page. Analytics cookies are optional.",
+      },
+    ];
   const [open, setOpen] = useState<number | null>(0);
 
   return (
@@ -31,15 +41,15 @@ export function Faq() {
       <div className="mx-auto w-full max-w-6xl px-4">
         <div className="flex flex-col items-center text-center">
           <div className="inline-flex items-center rounded-full border border-[var(--plk-brand-600)] bg-white px-4 py-2 text-xs font-semibold tracking-[0.16em] text-[var(--plk-brand-600)]">
-            FAQ
+            {resolvedEyebrow}
           </div>
           <h2 className="mt-4 font-[var(--font-heading)] text-3xl font-extrabold tracking-[-0.02em] text-[var(--plk-ink-900)] sm:text-4xl">
-            Questions, answered
+            {resolvedHeading}
           </h2>
         </div>
 
         <div className="mx-auto mt-10 max-w-3xl space-y-3">
-          {faqs.map((item, idx) => {
+          {resolvedItems.map((item, idx) => {
             const isOpen = open === idx;
             return (
               <div
@@ -87,4 +97,3 @@ export function Faq() {
     </section>
   );
 }
-

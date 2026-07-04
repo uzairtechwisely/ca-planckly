@@ -3,7 +3,23 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export function SiteFooter() {
+export function SiteFooter({
+  logoSrc,
+  description,
+  contactEmail,
+  location,
+}: {
+  logoSrc?: string;
+  description?: string;
+  contactEmail?: string;
+  location?: string;
+} = {}) {
+  const resolvedLogoSrc = logoSrc ?? "https://joinnnow.plancklyimages.com/Logo.png";
+  const resolvedDescription =
+    description ??
+    "Planckly California is a high-conversion landing experience designed to capture interest and onboard early users. Free to start.";
+  const resolvedContactEmail = contactEmail ?? "hello@planckly.com";
+  const resolvedLocation = location ?? "California, United States";
   return (
     <footer className="bg-[var(--plk-footer-900)]">
       <div className="mx-auto w-full max-w-6xl px-4 py-14">
@@ -12,7 +28,7 @@ export function SiteFooter() {
             <div className="flex items-center gap-3">
               <div className="relative h-9 w-28">
                 <Image
-                  src="https://joinnnow.plancklyimages.com/Logo.png"
+                  src={resolvedLogoSrc}
                   alt="Planckly"
                   fill
                   sizes="112px"
@@ -21,8 +37,7 @@ export function SiteFooter() {
               </div>
             </div>
             <p className="mt-4 max-w-md text-sm leading-6 text-[rgba(200,210,226,0.90)]">
-              Planckly California is a high-conversion landing experience designed to capture interest and
-              onboard early users. Free to start.
+              {resolvedDescription}
             </p>
           </div>
           <div className="space-y-3">
@@ -42,8 +57,8 @@ export function SiteFooter() {
             <div className="text-xs font-semibold tracking-[0.16em] text-[rgba(200,210,226,0.70)]">
               CONTACT
             </div>
-            <div className="text-sm font-semibold text-white/90">hello@planckly.com</div>
-            <div className="text-sm text-[rgba(200,210,226,0.90)]">California, United States</div>
+            <div className="text-sm font-semibold text-white/90">{resolvedContactEmail}</div>
+            <div className="text-sm text-[rgba(200,210,226,0.90)]">{resolvedLocation}</div>
           </div>
         </div>
         <div className="mt-12 border-t border-white/10 pt-6 text-xs text-[rgba(200,210,226,0.70)]">
