@@ -4,8 +4,11 @@ import { useCallback, useState } from "react";
 
 import { useClientContext } from "@/components/ClientProviders";
 import { SiteHeader } from "@/components/SiteHeader";
-import { Hero } from "@/components/Hero";
-import { StatsBand } from "@/components/StatsBand";
+import { HeroBanner } from "@/components/HeroBanner";
+import { BenefitsBand } from "@/components/BenefitsBand";
+import { ScrollShowcase } from "@/components/ScrollShowcase";
+import { UseCasesGrid } from "@/components/UseCasesGrid";
+import { Testimonials } from "@/components/Testimonials";
 import { Pricing } from "@/components/Pricing";
 import { Faq } from "@/components/Faq";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -24,9 +27,15 @@ export function HomePageClient({ content }: { content: SellerProductCatalogueDat
 
   return (
     <div className="relative flex-1">
-      <SiteHeader onJoin={onJoin} logoSrc={content.branding.logoSrc} joinLabel={content.header.joinLabel} />
+      <SiteHeader
+        onJoin={onJoin}
+        logoSrc={content.branding.logoSrc}
+        joinLabel={content.header.joinLabel}
+        navItems={content.header.nav}
+        variant="nav"
+      />
       <main>
-        <Hero
+        <HeroBanner
           onJoin={onJoin}
           badge={content.hero.badge}
           headingPrefix={content.hero.headingPrefix}
@@ -36,19 +45,35 @@ export function HomePageClient({ content }: { content: SellerProductCatalogueDat
           primaryCtaLabel={content.hero.primaryCtaLabel}
           secondaryCtaLabel={content.hero.secondaryCtaLabel}
           secondaryCtaHref={content.hero.secondaryCtaHref}
-          features={content.hero.features}
           image={content.hero.image}
-          miniStats={content.hero.miniStats}
+          trust={content.hero.trust}
         />
-        <StatsBand stats={content.statsBand.stats} />
-        <Pricing
-          onJoin={onJoin}
-          eyebrow={content.pricing.eyebrow}
-          heading={content.pricing.heading}
-          description={content.pricing.description}
-          plans={content.pricing.plans}
+        <BenefitsBand eyebrow={content.benefits.eyebrow} heading={content.benefits.heading} items={content.benefits.items} />
+        <ScrollShowcase
+          eyebrow={content.showcase.eyebrow}
+          heading={content.showcase.heading}
+          description={content.showcase.description}
+          steps={content.showcase.steps}
         />
-        <Faq eyebrow={content.faq.eyebrow} heading={content.faq.heading} items={content.faq.items} />
+        <UseCasesGrid
+          eyebrow={content.useCases.eyebrow}
+          heading={content.useCases.heading}
+          description={content.useCases.description}
+          items={content.useCases.items}
+        />
+        <Testimonials eyebrow={content.socialProof.eyebrow} heading={content.socialProof.heading} items={content.socialProof.items} />
+        <div id="pricing">
+          <Pricing
+            onJoin={onJoin}
+            eyebrow={content.pricing.eyebrow}
+            heading={content.pricing.heading}
+            description={content.pricing.description}
+            plans={content.pricing.plans}
+          />
+        </div>
+        <div id="faq">
+          <Faq eyebrow={content.faq.eyebrow} heading={content.faq.heading} items={content.faq.items} />
+        </div>
       </main>
       <SiteFooter
         logoSrc={content.branding.logoSrc}

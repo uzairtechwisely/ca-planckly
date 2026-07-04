@@ -3,9 +3,15 @@ import { type SellerProductCatalogueData } from "@/templates/seller-product-cata
 
 export function sellerProductCatalogueDefaultContent(hostname: string): CampaignContent {
   const heroImagePrompt =
-    "photorealistic%20diverse%20California%20small%20business%20owners%20at%20a%20coastal%20farmers%20market%2C%20palm%20trees%2C%20warm%20golden%20hour%2C%20Santa%20Monica%20vibe%2C%20candid%20smiles%2C%20modern%20storefronts%2C%20shallow%20depth%20of%20field%2C%2035mm%2C%20ultra%20detailed%2C%20natural%20colors%2C%20no%20text%2C%20no%20logo";
+    "cinematic%20photorealistic%20California%20small%20business%20storefront%20with%20diverse%20owners%2C%20golden%20hour%2C%20palm%20trees%2C%20shallow%20depth%20of%20field%2C%2035mm%2C%20ultra%20detailed%2C%20natural%20colors%2C%20no%20text%2C%20no%20logo";
   const ogImagePrompt =
     "photorealistic%20California%20storefront%20scene%20with%20diverse%20customers%2C%20Los%20Angeles%20street%2C%20sunshine%2C%20palm%20trees%2C%20modern%20minimal%20aesthetic%2C%20cinematic%20lighting%2C%20ultra%20realistic%2C%20no%20text";
+  const showcasePrompt1 =
+    "photorealistic%20modern%20SaaS%20dashboard%20on%20a%20laptop%20in%20a%20bright%20California%20coffee%20shop%2C%20warm%20sunlight%2C%20shallow%20depth%20of%20field%2C%20ultra%20detailed%2C%20no%20text";
+  const showcasePrompt2 =
+    "photorealistic%20mobile%20checkout%20experience%20in%20hand%20at%20an%20outdoor%20farmers%20market%20in%20California%2C%20diverse%20crowd%2C%20candid%2C%20natural%20light%2C%20no%20text";
+  const showcasePrompt3 =
+    "photorealistic%20inventory%20and%20product%20catalogue%20management%20on%20a%20desktop%20monitor%2C%20modern%20minimal%20office%2C%20natural%20light%2C%20ultra%20realistic%2C%20no%20text";
 
   const data: SellerProductCatalogueData = {
     branding: {
@@ -13,6 +19,13 @@ export function sellerProductCatalogueDefaultContent(hostname: string): Campaign
     },
     header: {
       joinLabel: "Join Planckly",
+      nav: [
+        { label: "Benefits", href: "#benefits" },
+        { label: "Product", href: "#product" },
+        { label: "Use cases", href: "#use-cases" },
+        { label: "Pricing", href: "#pricing" },
+        { label: "FAQ", href: "#faq" },
+      ],
     },
     hero: {
       badge: "Built for California",
@@ -24,39 +37,105 @@ export function sellerProductCatalogueDefaultContent(hostname: string): Campaign
       primaryCtaLabel: "Join Planckly (Free)",
       secondaryCtaLabel: "View pricing",
       secondaryCtaHref: "#pricing",
-      features: [
+      image: {
+        src: `https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${heroImagePrompt}&image_size=landscape_16_9`,
+        alt: "California small business owners",
+      },
+      trust: [
+        { label: "Launch", value: "California" },
+        { label: "Setup", value: "Minutes" },
+        { label: "Plan", value: "Free to start" },
+      ],
+    },
+    benefits: {
+      eyebrow: "BENEFITS",
+      heading: "A modern catalogue experience that feels premium and converts",
+      items: [
         {
           icon: "shield-check",
-          title: "Made for CA",
-          description: "Local-first messaging with a premium experience that feels at home in California.",
+          title: "Trusted experience",
+          description: "Clean UI, clear flows, and confidence-first messaging from first scroll to submission.",
         },
         {
           icon: "zap",
-          title: "Fast to launch",
-          description: "Get started in minutes and iterate quickly as you grow local demand.",
+          title: "Fast launch",
+          description: "A lightweight landing experience that stays smooth on mobile and desktop.",
         },
         {
           icon: "sparkles",
-          title: "Looks premium",
-          description: "Beautiful UI and smooth motion designed to convert California visitors.",
+          title: "Cinematic storytelling",
+          description: "Scroll-driven sections that explain the value without feeling salesy.",
         },
       ],
-      image: {
-        src: `https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${heroImagePrompt}&image_size=landscape_4_3`,
-        alt: "California small business owners",
-      },
-      miniStats: [
-        { label: "Coverage", value: "California" },
-        { label: "Setup", value: "Minutes" },
-        { label: "Cost", value: "$0 to start" },
+    },
+    showcase: {
+      eyebrow: "PRODUCT",
+      heading: "A simple story: list, share, convert, grow",
+      description:
+        "A scroll-driven product walkthrough that communicates value fast. Content will be personalized per domain later without changing the structure.",
+      steps: [
+        {
+          title: "Publish your catalogue",
+          description: "Create a clean catalogue experience that works across devices and feels premium.",
+          image: {
+            src: `https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${showcasePrompt3}&image_size=landscape_16_9`,
+            alt: "Product catalogue management",
+          },
+        },
+        {
+          title: "Share anywhere",
+          description: "Make it easy for customers to browse, discover, and reach out from anywhere.",
+          image: {
+            src: `https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${showcasePrompt2}&image_size=landscape_16_9`,
+            alt: "Mobile checkout experience",
+          },
+        },
+        {
+          title: "Track interest",
+          description: "Know what’s working: traffic sources, conversion steps, and demand signals.",
+          image: {
+            src: `https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${showcasePrompt1}&image_size=landscape_16_9`,
+            alt: "Analytics dashboard",
+          },
+        },
       ],
     },
-    statsBand: {
-      stats: [
-        { value: "NorCal", label: "Bay Area energy" },
-        { value: "SoCal", label: "LA & SD vibes" },
-        { value: "Local", label: "Community-first" },
-        { value: "$0", label: "Free to start" },
+    useCases: {
+      eyebrow: "USE CASES",
+      heading: "Built for real sellers and real workflows",
+      description:
+        "This section becomes domain-specific later (CA, TX, UK) while the layout stays locked and reusable.",
+      items: [
+        { icon: "zap", title: "Pop-ups & markets", description: "Launch a fast catalogue and capture demand with a clean CTA." },
+        { icon: "sparkles", title: "Boutique storefronts", description: "Showcase products in a premium layout that feels on-brand." },
+        { icon: "shield-check", title: "Service businesses", description: "Collect leads with a frictionless flow and clear messaging." },
+        { icon: "sparkles", title: "Local brands", description: "Tell your story with scroll-driven sections and lifestyle visuals." },
+        { icon: "zap", title: "New launches", description: "Measure interest early and iterate quickly before scaling." },
+        { icon: "shield-check", title: "Teams", description: "Keep the experience consistent while updating content per campaign." },
+      ],
+    },
+    socialProof: {
+      eyebrow: "SOCIAL PROOF",
+      heading: "Loved for clarity, speed, and polish",
+      items: [
+        {
+          quote: "The layout feels premium and the story makes sense in seconds. It’s exactly what we needed for a clean launch.",
+          name: "Alex M.",
+          title: "Owner",
+          company: "Local Retail",
+        },
+        {
+          quote: "The scroll showcase explains the value without overwhelming visitors. The CTA placement is perfect.",
+          name: "Jordan R.",
+          title: "Founder",
+          company: "Small Business",
+        },
+        {
+          quote: "Everything feels intentional: spacing, motion, and the flow from hero to pricing. Super high quality.",
+          name: "Taylor K.",
+          title: "Marketing Lead",
+          company: "Growing Brand",
+        },
       ],
     },
     pricing: {

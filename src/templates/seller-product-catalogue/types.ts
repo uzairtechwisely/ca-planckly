@@ -4,6 +4,7 @@ export type SellerProductCatalogueData = {
   };
   header: {
     joinLabel: string;
+    nav: Array<{ label: string; href: string }>;
   };
   hero: {
     badge: string;
@@ -14,19 +15,47 @@ export type SellerProductCatalogueData = {
     primaryCtaLabel: string;
     secondaryCtaLabel: string;
     secondaryCtaHref: string;
-    features: Array<{
+    image: { src: string; alt: string };
+    trust: Array<{ label: string; value: string }>;
+  };
+  benefits: {
+    eyebrow: string;
+    heading: string;
+    items: Array<{
       icon: "shield-check" | "zap" | "sparkles";
       title: string;
       description: string;
     }>;
-    image: {
-      src: string;
-      alt: string;
-    };
-    miniStats: Array<{ label: string; value: string }>;
   };
-  statsBand: {
-    stats: Array<{ value: string; label: string }>;
+  showcase: {
+    eyebrow: string;
+    heading: string;
+    description: string;
+    steps: Array<{
+      title: string;
+      description: string;
+      image: { src: string; alt: string };
+    }>;
+  };
+  useCases: {
+    eyebrow: string;
+    heading: string;
+    description: string;
+    items: Array<{
+      title: string;
+      description: string;
+      icon: "shield-check" | "zap" | "sparkles";
+    }>;
+  };
+  socialProof: {
+    eyebrow: string;
+    heading: string;
+    items: Array<{
+      quote: string;
+      name: string;
+      title: string;
+      company: string;
+    }>;
   };
   pricing: {
     eyebrow: string;
@@ -53,4 +82,3 @@ export type SellerProductCatalogueData = {
     location: string;
   };
 };
-
