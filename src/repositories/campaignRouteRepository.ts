@@ -8,6 +8,8 @@ const campaignRouteSchema = z.object({
   hostname: z.string().trim().min(1),
   activeTemplate: z.string().trim().min(1),
   status: z.enum(["live", "draft", "disabled"]),
+  updatedAt: z.string().trim().min(1).optional(),
+  updatedBy: z.string().trim().min(1).optional(),
 });
 
 function isTemplateId(value: string): value is CampaignTemplateId {
@@ -47,6 +49,7 @@ export async function getCampaignRoute(hostname: string): Promise<CampaignRoute 
     hostname: parsed.data.hostname,
     activeTemplate: parsed.data.activeTemplate,
     status: parsed.data.status,
+    updatedAt: parsed.data.updatedAt,
+    updatedBy: parsed.data.updatedBy,
   };
 }
-

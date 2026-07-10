@@ -15,6 +15,8 @@ export type CampaignRoute = {
   hostname: string;
   activeTemplate: CampaignTemplateId;
   status: CampaignStatus;
+  updatedAt?: string;
+  updatedBy?: string;
 };
 
 export type CampaignSEO = {
