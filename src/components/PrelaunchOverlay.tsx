@@ -113,10 +113,22 @@ export function PrelaunchOverlay() {
 
   const canSubmit = useMemo(() => /\S+@\S+\.\S+/.test(email.trim()), [email]);
 
+  const disabledByDev = useMemo(() => {
+    if (process.env.NEXT_PUBLIC_DISABLE_PRELAUNCH_OVERLAY === "true") return true;
+    if (typeof window === "undefined") return false;
+    try {
+      return new URLSearchParams(window.location.search).has("no_prelaunch");
+    } catch {
+      return false;
+    }
+  }, []);
+
   useEffect(() => {
     const t = window.setTimeout(() => setShowConfetti(false), 2400);
     return () => window.clearTimeout(t);
   }, []);
+
+  if (disabledByDev) return null;
 
   async function submit() {
     if (!canSubmit || status === "submitting") return;

@@ -7,6 +7,7 @@ import { type ActiveCampaign, type CampaignContent, type CampaignTemplateId } fr
 const defaultTemplateByHostname: Record<string, CampaignTemplateId> = {
   "ca.planckly.com": "seller-product-catalogue",
   localhost: "seller-product-catalogue",
+  "127.0.0.1": "seller-product-catalogue",
 };
 
 function ensureContentShape(
